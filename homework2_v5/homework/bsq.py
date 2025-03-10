@@ -65,7 +65,7 @@ class BSQ(torch.nn.Module):
         x = self.model_encoder(x)
         
         # l2norm
-        # TODO
+        x = x/torch.linalg.norm(x)
         # x = torch.norm(x, p=2, dim=-1)
         
         # differentiable sign

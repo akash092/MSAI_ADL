@@ -43,7 +43,19 @@ class PatchifyLinear(torch.nn.Module):
 
     def __init__(self, input_channel: int = 3, patch_size: int = 25, latent_dim: int = 128):
         super().__init__()
-        self.patch_conv = torch.nn.Conv2d(input_channel, latent_dim, patch_size, patch_size, bias=False)
+        # Original
+        # self.patch_conv = torch.nn.Conv2d(input_channel, latent_dim, patch_size, patch_size, bias=False)
+        
+        # Modified for BSQ
+        layers = []
+        layers.append(torch.nn.Conv2d(input_channel, latent_dim, patch_size, patch_size, bias=False))
+        layers.append(torch.nn.GELU())
+        padding = (patch_size - 1) // 2 # to preserve input dimension
+        layers.append(torch.nn.Conv2d(latent_dim, latent_dim, patch_size, 1, padding, bias=False))
+        layers.append(torch.nn.GELU())
+        layers.append(torch.nn.Conv2d(latent_dim, latent_dim, patch_size, 1, padding, bias=False))
+        layers.append(torch.nn.GELU())
+        self.patch_conv = torch.nn.Sequential(*layers)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -65,7 +77,16 @@ class UnpatchifyLinear(torch.nn.Module):
 
     def __init__(self, input_channel: int = 3, patch_size: int = 25, latent_dim: int = 128):
         super().__init__()
-        self.unpatch_conv = torch.nn.ConvTranspose2d(latent_dim, input_channel, patch_size, patch_size, bias=False)
+        # original
+        # self.unpatch_conv = torch.nn.ConvTranspose2d(latent_dim, input_channel, patch_size, patch_size, bias=False)
+
+        # modified for BSQ
+        layers = []
+        layers.append(torch.nn.ConvTranspose2d(latent_dim, input_channel, patch_size, patch_size, bias=False))
+        layers.append(torch.nn.GELU())
+        layers.append(torch.nn.Conv2d(input_channel, input_channel, patch_size, 1,patch_size//2, bias=False))
+        layers.append(torch.nn.GELU())
+        self.unpatch_conv = torch.nn.Sequential(*layers)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
