@@ -48,12 +48,12 @@ class PatchifyLinear(torch.nn.Module):
         
         # Modified for BSQ
         layers = []
-        layers.append(torch.nn.Conv2d(input_channel, latent_dim, patch_size, patch_size, bias=False))
+        layers.append(torch.nn.Conv2d(input_channel, latent_dim, patch_size, patch_size))
         layers.append(torch.nn.GELU())
         padding = (patch_size - 1) // 2 # to preserve input dimension
-        layers.append(torch.nn.Conv2d(latent_dim, latent_dim, patch_size, 1, padding, bias=False))
+        layers.append(torch.nn.Conv2d(latent_dim, latent_dim, patch_size, 1, padding))
         layers.append(torch.nn.GELU())
-        layers.append(torch.nn.Conv2d(latent_dim, latent_dim, patch_size, 1, padding, bias=False))
+        layers.append(torch.nn.Conv2d(latent_dim, latent_dim, patch_size, 1, padding))
         layers.append(torch.nn.GELU())
         self.patch_conv = torch.nn.Sequential(*layers)
 
@@ -82,10 +82,10 @@ class UnpatchifyLinear(torch.nn.Module):
 
         # modified for BSQ
         layers = []
-        layers.append(torch.nn.ConvTranspose2d(latent_dim, input_channel, patch_size, patch_size, bias=False))
-        layers.append(torch.nn.GELU())
-        layers.append(torch.nn.Conv2d(input_channel, input_channel, patch_size, 1,patch_size//2, bias=False))
-        layers.append(torch.nn.GELU())
+        layers.append(torch.nn.ConvTranspose2d(latent_dim, input_channel, patch_size, patch_size))
+        # layers.append(torch.nn.GELU())
+        # layers.append(torch.nn.Conv2d(input_channel, input_channel, patch_size, 1,patch_size//2))
+        # layers.append(torch.nn.GELU())
         self.unpatch_conv = torch.nn.Sequential(*layers)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

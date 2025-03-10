@@ -64,9 +64,11 @@ class BSQ(torch.nn.Module):
         # only channel_size(3 for example) -> codebook_bits switch
         x = self.model_encoder(x)
         
-        # l2norm
-        x = x/torch.linalg.norm(x)
+        # # l2norm
+        # x = x/torch.linalg.norm(x)
         # x = torch.norm(x, p=2, dim=-1)
+        norm = torch.norm(x, p=2, dim=-1, keepdim=True)
+        x = x / (norm + 1e-8)
         
         # differentiable sign
         x = diff_sign(x)
