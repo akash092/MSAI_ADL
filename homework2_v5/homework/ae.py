@@ -134,19 +134,71 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
         """
 
         def __init__(self, patch_size: int, latent_dim: int, bottleneck: int):
+            # super().__init__()
+            # layers = []
+            # layers.append(torch.nn.Conv2d(3, latent_dim, patch_size, patch_size))
+            # layers.append(torch.nn.GELU())
+            # padding = (patch_size - 1) // 2 # to preserve input dimension
+            # layers.append(torch.nn.Conv2d(latent_dim, latent_dim, patch_size, 1, padding))
+            # layers.append(torch.nn.GELU())
+            # layers.append(torch.nn.Conv2d(latent_dim, latent_dim, patch_size, 1, padding))
+            # layers.append(torch.nn.GELU())
+            # self.model = torch.nn.Sequential(*layers)
             super().__init__()
-            self.model = torch.nn.Conv2d(3, latent_dim, patch_size, patch_size)
+            layers = []
+            layers.append(torch.nn.Conv2d(3, latent_dim, patch_size, patch_size))
+            layers.append(torch.nn.BatchNorm2d(latent_dim))
+            layers.append(torch.nn.GELU())
+            layers.append(torch.nn.Conv2d(latent_dim, bottleneck, kernel_size=1))
+            layers.append(torch.nn.BatchNorm2d(latent_dim))
+            layers.append(torch.nn.GELU())
+            layers.append(torch.nn.Conv2d(latent_dim, bottleneck, kernel_size=1))
+            layers.append(torch.nn.BatchNorm2d(latent_dim))
+            layers.append(torch.nn.GELU())
+            self.model = torch.nn.Sequential(*layers)
+
+            self.skip = torch.nn.Conv2d(3, latent_dim, patch_size, patch_size)
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
-            return chw_to_hwc(self.model(hwc_to_chw(x)))
+            # return chw_to_hwc(self.model(hwc_to_chw(x)))
+            x = hwc_to_chw(x)
+            x = self.skip(x) + self.model(x)
+            return chw_to_hwc(x)
 
     class PatchDecoder(torch.nn.Module):
         def __init__(self, patch_size: int, latent_dim: int, bottleneck: int):
+            # super().__init__()
+            # self.model = torch.nn.ConvTranspose2d(latent_dim, 3, patch_size, patch_size)
             super().__init__()
-            self.model = torch.nn.ConvTranspose2d(latent_dim, 3, patch_size, patch_size)
+            # self.conv1 = torch.nn.Conv2d(bottleneck, latent_dim, kernel_size=1)
+            # self.act1 = torch.nn.GELU()
+            # self.conv2 = torch.nn.Conv2d(bottleneck, latent_dim, kernel_size=1)
+            # self.act2 = torch.nn.GELU()
+            # self.conv3 = torch.nn.ConvTranspose2d(latent_dim, 3, kernel_size=patch_size, stride=patch_size)
+            # self.act3 = torch.nn.GELU()
+            layers = []
+
+            layers.append(torch.nn.Conv2d(bottleneck, latent_dim, kernel_size=1))
+            layers.append(torch.nn.BatchNorm2d(latent_dim))
+            layers.append(torch.nn.GELU())
+            layers.append(torch.nn.Conv2d(bottleneck, latent_dim, kernel_size=1))
+            layers.append(torch.nn.BatchNorm2d(latent_dim))
+            layers.append(torch.nn.GELU())
+            layers.append(torch.nn.ConvTranspose2d(latent_dim, 3, patch_size, patch_size))
+            layers.append(torch.nn.BatchNorm2d(3))
+            layers.append(torch.nn.GELU())
+            self.model = torch.nn.Sequential(*layers)
+
+            self.skip = torch.nn.ConvTranspose2d(latent_dim, 3, patch_size, patch_size)
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
-            return chw_to_hwc(self.model(hwc_to_chw(x)))
+            # return chw_to_hwc(self.model(hwc_to_chw(x)))
+            x = hwc_to_chw(x)
+            # x = self.act1(self.conv1(x))
+            # x = self.act2(self.conv2(x))
+            # x = self.act3(self.conv3(x))
+            x = self.skip(x) + self.model(x)
+            return chw_to_hwc(x)
 
     def __init__(self, patch_size: int = 25, latent_dim: int = 128, bottleneck: int = 128):
         super().__init__()
@@ -156,9 +208,9 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
         # self.model_decoder = torch.nn.Sequential(
         #     UnpatchifyLinear(3, patch_size, latent_dim)
         # )
-        self.model_encoder = self.PatchEncoder(patch_size,latent_dim, bottleneck)
+        self.encoder = self.PatchEncoder(patch_size, latent_dim, bottleneck)
         
-        self.model_decoder = self.PatchDecoder(patch_size,latent_dim, bottleneck)
+        self.decoder = self.PatchDecoder(patch_size, latent_dim, bottleneck)
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
         """
@@ -166,10 +218,12 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
         minimize (or even just visualize).
         You can return an empty dictionary if you don't have any additional terms.
         """
-        return self.model_decoder(self.model_encoder(x)), {}
+        encoded = self.encode(x)
+        reconstructed = self.decode(encoded)
+        return reconstructed, {}
 
     def encode(self, x: torch.Tensor) -> torch.Tensor:
-        return self.model_encoder(x)
+        return self.encoder(x)
 
     def decode(self, x: torch.Tensor) -> torch.Tensor:
-        return self.model_decoder(x)
+        return self.decoder(x)
