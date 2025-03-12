@@ -147,13 +147,13 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
             super().__init__()
             layers = []
             layers.append(torch.nn.Conv2d(3, latent_dim, patch_size, patch_size))
-            layers.append(torch.nn.BatchNorm2d(latent_dim))
+            # layers.append(torch.nn.BatchNorm2d(latent_dim))
             layers.append(torch.nn.GELU())
             layers.append(torch.nn.Conv2d(latent_dim, bottleneck, kernel_size=1))
-            layers.append(torch.nn.BatchNorm2d(latent_dim))
+            # layers.append(torch.nn.BatchNorm2d(latent_dim))
             layers.append(torch.nn.GELU())
             layers.append(torch.nn.Conv2d(latent_dim, bottleneck, kernel_size=1))
-            layers.append(torch.nn.BatchNorm2d(latent_dim))
+            # layers.append(torch.nn.BatchNorm2d(latent_dim))
             layers.append(torch.nn.GELU())
             self.model = torch.nn.Sequential(*layers)
 
@@ -179,13 +179,13 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
             layers = []
 
             layers.append(torch.nn.Conv2d(bottleneck, latent_dim, kernel_size=1))
-            layers.append(torch.nn.BatchNorm2d(latent_dim))
+            # layers.append(torch.nn.BatchNorm2d(latent_dim))
             layers.append(torch.nn.GELU())
             layers.append(torch.nn.Conv2d(bottleneck, latent_dim, kernel_size=1))
-            layers.append(torch.nn.BatchNorm2d(latent_dim))
+            # layers.append(torch.nn.BatchNorm2d(latent_dim))
             layers.append(torch.nn.GELU())
             layers.append(torch.nn.ConvTranspose2d(latent_dim, 3, patch_size, patch_size))
-            layers.append(torch.nn.BatchNorm2d(3))
+            # layers.append(torch.nn.BatchNorm2d(3))
             layers.append(torch.nn.GELU())
             self.model = torch.nn.Sequential(*layers)
 
