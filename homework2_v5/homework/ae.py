@@ -135,27 +135,30 @@ class PatchAutoEncoder(torch.nn.Module, PatchAutoEncoderBase):
 
         def __init__(self, patch_size: int, latent_dim: int, bottleneck: int):
             super().__init__()
-            raise NotImplementedError()
+            self.model = torch.nn.Conv2d(3, latent_dim, patch_size, patch_size)
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
-            raise NotImplementedError()
+            return chw_to_hwc(self.model(hwc_to_chw(x)))
 
     class PatchDecoder(torch.nn.Module):
         def __init__(self, patch_size: int, latent_dim: int, bottleneck: int):
             super().__init__()
-            raise NotImplementedError()
+            self.model = torch.nn.ConvTranspose2d(latent_dim, 3, patch_size, patch_size)
 
         def forward(self, x: torch.Tensor) -> torch.Tensor:
-            raise NotImplementedError()
+            return chw_to_hwc(self.model(hwc_to_chw(x)))
 
     def __init__(self, patch_size: int = 25, latent_dim: int = 128, bottleneck: int = 128):
         super().__init__()
-        self.model_encoder = torch.nn.Sequential(
-            PatchifyLinear(3, patch_size,latent_dim)
-        )
-        self.model_decoder = torch.nn.Sequential(
-            UnpatchifyLinear(3, patch_size, latent_dim)
-        )
+        # self.model_encoder = torch.nn.Sequential(
+        #     PatchifyLinear(3, patch_size,latent_dim)
+        # )
+        # self.model_decoder = torch.nn.Sequential(
+        #     UnpatchifyLinear(3, patch_size, latent_dim)
+        # )
+        self.model_encoder = self.PatchEncoder(patch_size,latent_dim, bottleneck)
+        
+        self.model_decoder = self.PatchDecoder(patch_size,latent_dim, bottleneck)
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
         """
