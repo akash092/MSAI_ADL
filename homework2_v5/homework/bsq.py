@@ -1,6 +1,7 @@
 import abc
 
 import torch
+import torch.nn.functional as F
 
 from .ae import PatchAutoEncoder
 
@@ -65,9 +66,10 @@ class BSQ(torch.nn.Module):
         x = self.model_encoder(x)
         
         # l2norm
-        # TODO
-        # x = torch.norm(x, p=2, dim=-1)
-        
+        norm = torch.norm(x, p=2, dim=-1, keepdim=True)
+        x = x / norm
+        # x = F.normalize(x, p=2, dim=-1)
+
         # differentiable sign
         x = diff_sign(x)
         return x
@@ -111,7 +113,7 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
     """
 
     def __init__(self, patch_size: int = 5, latent_dim: int = 128, codebook_bits: int = 10):
-        super().__init__(patch_size=patch_size, latent_dim=latent_dim)
+        super().__init__(patch_size=patch_size, latent_dim=latent_dim,bottleneck=latent_dim)
         self.bsq = BSQ(codebook_bits, latent_dim)
 
     def encode_index(self, x: torch.Tensor) -> torch.Tensor:
@@ -123,7 +125,6 @@ class BSQPatchAutoEncoder(PatchAutoEncoder, Tokenizer):
     def encode(self, x: torch.Tensor) -> torch.Tensor:
         return self.bsq.encode(super().encode(x))
         
-
     def decode(self, x: torch.Tensor) -> torch.Tensor:
         return super().decode(self.bsq.decode(x))
 

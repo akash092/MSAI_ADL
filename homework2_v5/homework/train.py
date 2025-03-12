@@ -112,7 +112,8 @@ def train(model_name_or_path: str, epochs: int = 5, batch_size: int = 64):
 
     class CheckPointer(L.Callback):
         def on_train_epoch_end(self, trainer, pl_module):
-            fn = Path(f"checkpoints/{timestamp}_{model_name}.pth")
+            epoch = trainer.current_epoch
+            fn = Path(f"checkpoints/{timestamp}_{model_name}_{epoch}.pth")
             fn.parent.mkdir(exist_ok=True, parents=True)
             torch.save(model, fn)
             torch.save(model, Path(__file__).parent / f"{model_name}.pth")
