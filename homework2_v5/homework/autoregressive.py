@@ -59,8 +59,10 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         self.embedding = torch.nn.Embedding(n_tokens, d_latent)
         
         # Transformer encoder layer for processing sequences
-        self.encoder_layer = torch.nn.TransformerEncoderLayer(d_model=d_latent, nhead=8)
-        self.transformer = torch.nn.TransformerEncoder(self.encoder_layer, num_layers=6)
+        self.encoder_layer = torch.nn.TransformerEncoderLayer(d_model=d_latent, 
+          nhead=8, batch_first=True)
+        self.transformer = torch.nn.TransformerEncoder(self.encoder_layer, 
+          num_layers=6)
         
         # Output layer to predict token probabilities
         self.output_layer = torch.nn.Linear(d_latent, n_tokens)
@@ -74,13 +76,13 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         x = self.embedding(x)
         
         # Generate a causal mask to ensure autoregressive property
-        mask = torch.nn.Transformer.generate_square_subsequent_mask(B)
+        mask = torch.nn.Transformer.generate_square_subsequent_mask(seq_len).to(x.device)
         
         # Shift input sequence by one position for autoregressive processing
         x_shifted = torch.nn.functional.pad(x[:, :-1, :], (0, 0, 1, 0), value=0)
         
         # Pass through the transformer with the causal mask
-        x_encoded = self.transformer(x_shifted, mask=mask)
+        x_encoded = self.transformer(x_shifted, mask=mask, is_causal=True)
         
         # Compute output logits
         logits = self.output_layer(x_encoded)
@@ -91,4 +93,26 @@ class AutoregressiveModel(torch.nn.Module, Autoregressive):
         return logits, {}
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
-        raise NotImplementedError()
+        device = device or (torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu"))
+        self.to(device)
+        self.eval()
+        
+        seq_len = h * w
+        generated = torch.zeros((B, seq_len), dtype=torch.long, device=device)
+        
+        for i in range(seq_len):
+            x_input = generated.clone()
+            
+            # Pass through the model
+            logits, _ = self.forward(x_input.view(B, h, w))  # Extract logits from tuple
+            
+            # Get the probabilities for the next token
+            probs = torch.nn.functional.softmax(logits.view(B, seq_len, -1), dim=-1)
+            
+            # Sample from the probability distribution for the next token only
+            next_token = torch.multinomial(probs[:, i, :], num_samples=1).squeeze(-1)
+            
+            # Store generated token at the current position
+            generated[:, i] = next_token
+        
+        return generated.view(B, h, w)
