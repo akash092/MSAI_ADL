@@ -41,7 +41,7 @@ class Autoregressive(abc.ABC):
         """
 
 
-class AutoregressiveModel(torch.nn.Module):
+class AutoregressiveModel(torch.nn.Module, Autoregressive):
     """
     Implement an auto-regressive model.
     The input is a set of patch tokens (integers), the output is an image of probability.
@@ -55,10 +55,40 @@ class AutoregressiveModel(torch.nn.Module):
 
     def __init__(self, d_latent: int = 128, n_tokens: int = 2**10):
         super().__init__()
-        raise NotImplementedError()
+        # Embedding layer to map token indices to latent space
+        self.embedding = torch.nn.Embedding(n_tokens, d_latent)
+        
+        # Transformer encoder layer for processing sequences
+        self.encoder_layer = torch.nn.TransformerEncoderLayer(d_model=d_latent, nhead=8)
+        self.transformer = torch.nn.TransformerEncoder(self.encoder_layer, num_layers=6)
+        
+        # Output layer to predict token probabilities
+        self.output_layer = torch.nn.Linear(d_latent, n_tokens)
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
-        raise NotImplementedError()
+        B, h, w = x.shape
+        seq_len = h * w
+        
+        # Flatten input and embed token indices
+        x = x.view(B, seq_len)  # Flatten for processing
+        x = self.embedding(x)
+        
+        # Generate a causal mask to ensure autoregressive property
+        mask = torch.nn.Transformer.generate_square_subsequent_mask(B)
+        
+        # Shift input sequence by one position for autoregressive processing
+        x_shifted = torch.nn.functional.pad(x[:, :-1, :], (0, 0, 1, 0), value=0)
+        
+        # Pass through the transformer with the causal mask
+        x_encoded = self.transformer(x_shifted, mask=mask)
+        
+        # Compute output logits
+        logits = self.output_layer(x_encoded)
+        
+        # Reshape output back to (B, h, w, n_tokens)
+        logits = logits.view(B, h, w, -1)
+        
+        return logits, {}
 
     def generate(self, B: int = 1, h: int = 30, w: int = 20, device=None) -> torch.Tensor:  # noqa
         raise NotImplementedError()
