@@ -13,6 +13,7 @@ class BaseLLM:
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
         self.model = AutoModelForCausalLM.from_pretrained(checkpoint).to(device)
         self.device = device
+        self.tokenizer.padding_side = "left"
 
     def format_prompt(self, question: str) -> str:
         """
@@ -42,7 +43,17 @@ class BaseLLM:
         - decode the outputs with self.tokenizer.decode
 
         """
-        return self.batched_generate([prompt])[0]
+        #return self.batched_generate([prompt])[0]
+
+        # tokenizer.encode returns the tokens only of the input like 
+        # inputs=tensor([[22007,  6463,   314]], device='cuda:0')
+        # on the other hand tokenizer captues both tokens and attention mask
+        # inputs={'input_ids': tensor([[22007,  6463,   314]], device='cuda:0'), 'attention_mask': tensor([[1, 1, 1]], device='cuda:0')}
+
+        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
+        outputs = self.model.generate(**inputs)
+        return self.tokenizer.decode(outputs[0])
+
 
     @overload
     def batched_generate(
@@ -104,7 +115,40 @@ class BaseLLM:
                 for r in self.batched_generate(prompts[idx : idx + micro_batch_size], num_return_sequences, temperature)
             ]
 
-        raise NotImplementedError()
+        # Generation parameters
+        do_sample = temperature > 0
+        max_new_tokens = 50
+        num_sequences = num_return_sequences if num_return_sequences is not None else 1
+        
+        # tokenize the input. All inputs after tokenization will have the same len which will be 
+        # max of all the inputs. The smaller one would be left-padded.
+        # truncation ensures the maximum length of a input doesn't exceede the model max accepted value
+
+        # FROM DOCS AT https://huggingface.co/docs/transformers/v4.35.2/en/llm_tutorial#generate-text
+        padding = len(prompts) > 1
+        inputs = self.tokenizer(prompts, return_tensors="pt", padding=padding, truncation=True).to(self.device)
+        
+        # Generate next predictions
+        outputs = self.model.generate(**inputs, 
+                                      max_new_tokens=max_new_tokens, 
+                                      do_sample=do_sample, 
+                                      temperature=temperature,
+                                      num_return_sequences=num_sequences,
+                                      eos_token_id = self.tokenizer.eos_token_id
+                                      )
+        
+        # Only decode the token which were predicted(no point of decoding the original input)
+        decoded_outputs = self.tokenizer.batch_decode(outputs[:, len(inputs["input_ids"][0]) :], skip_special_tokens=True)
+        # If num_sequences is None or 1, return flat list
+        if num_sequences == 1:
+            return decoded_outputs
+        
+        # since the decoded_outputs is a flat list of len(inputs)*num_sequences
+        # group all outputs of same input into a sublist
+        answer = []
+        for i in range(0, len(decoded_outputs), num_sequences):
+            answer.append(decoded_outputs[i:i + num_sequences])
+        return answer
 
     def answer(self, *questions) -> list[float]:
         """
