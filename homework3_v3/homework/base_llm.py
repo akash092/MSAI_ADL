@@ -43,16 +43,16 @@ class BaseLLM:
         - decode the outputs with self.tokenizer.decode
 
         """
-        #return self.batched_generate([prompt])[0]
+        return self.batched_generate([prompt])[0]
 
         # tokenizer.encode returns the tokens only of the input like 
         # inputs=tensor([[22007,  6463,   314]], device='cuda:0')
         # on the other hand tokenizer captues both tokens and attention mask
         # inputs={'input_ids': tensor([[22007,  6463,   314]], device='cuda:0'), 'attention_mask': tensor([[1, 1, 1]], device='cuda:0')}
 
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
-        outputs = self.model.generate(**inputs)
-        return self.tokenizer.decode(outputs[0])
+        # inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
+        # outputs = self.model.generate(**inputs)
+        # return self.tokenizer.decode(outputs[0])
 
 
     @overload
@@ -117,7 +117,7 @@ class BaseLLM:
 
         # Generation parameters
         do_sample = temperature > 0
-        max_new_tokens = 50
+        max_new_tokens = 100
         num_sequences = num_return_sequences if num_return_sequences is not None else 1
         
         # tokenize the input. All inputs after tokenization will have the same len which will be 
@@ -157,7 +157,11 @@ class BaseLLM:
         # Convert each question
         prompts = [self.format_prompt(q) for q in questions]
         generations = self.batched_generate(prompts)
-        return [self.parse_answer(g) for g in generations]
+        print(f"{generations=}")
+        parsed_answers = [self.parse_answer(g) for g in generations]
+        print(f"{parsed_answers=}")
+        return parsed_answers
+            
 
 
 def test_model():
