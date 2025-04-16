@@ -1,11 +1,10 @@
 from .base_llm import BaseLLM
 from .data import Dataset, benchmark
-
+from transformers import Trainer, TrainingArguments
+from peft import PeftModel, LoraConfig, TaskType, get_peft_model
+from pathlib import Path
 
 def load() -> BaseLLM:
-    from pathlib import Path
-
-    from peft import PeftModel
 
     model_name = "sft_model"
     model_path = Path(__file__).parent / model_name
@@ -49,7 +48,8 @@ def format_example(prompt: str, answer: str) -> dict[str, str]:
     """
     Construct a question / answer pair. Consider rounding the answer to make it easier for the LLM.
     """
-    raise NotImplementedError()
+    # raise NotImplementedError()
+    return {"question": prompt, "answer": "<answer>"+str(answer)+"</answer>"}
 
 
 class TokenizedDataset:
@@ -78,8 +78,49 @@ def train_model(
     output_dir: str,
     **kwargs,
 ):
-    raise NotImplementedError()
-    test_model(output_dir)
+    # raise NotImplementedError()
+    # DOCS: https://huggingface.co/docs/peft/en/quicktour
+    llm = BaseLLM()
+    peft_config = LoraConfig(
+        target_modules="all-linear",
+        bias="none",
+        task_type="CAUSAL_LM", 
+        inference_mode=False, 
+        r=8, 
+        lora_alpha=32, 
+        lora_dropout=0.1
+    )
+
+    model = get_peft_model(llm.model, peft_config)
+    model.enable_input_require_grads()
+    model.print_trainable_parameters()
+
+    training_args = TrainingArguments(
+        gradient_checkpointing=True,
+        learning_rate=1e-3,
+        output_dir=output_dir,
+        logging_dir=output_dir,
+        report_to="tensorboard",
+        per_device_train_batch_size=32,
+        num_train_epochs=5,
+        # weight_decay=0.01,
+        # eval_strategy="epoch",
+        # save_strategy="epoch",
+        # load_best_model_at_end=True,
+    )
+    
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=TokenizedDataset(llm.tokenizer, Dataset("train"), format_example)
+    )
+
+    trainer.train()
+    model_name = "sft_model"
+    model_path = Path(__file__).parent / model_name
+    model.save_pretrained(model_path)
+
+    #test_model(output_dir)
 
 
 def test_model(ckpt_path: str):
