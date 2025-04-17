@@ -37,8 +37,8 @@ def train_model(
         bias="none",
         task_type="CAUSAL_LM", 
         inference_mode=False, 
-        r=8, 
-        lora_alpha=32, 
+        r=16, 
+        lora_alpha=16*4, 
         lora_dropout=0.1
     )
 

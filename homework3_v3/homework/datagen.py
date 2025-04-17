@@ -26,13 +26,11 @@ def generate_dataset(output_json: str = 'data/rft.json', oversample: int = 10, t
         for idx in range(r_idx, r_idx+batch_size):
             if idx >= len(dataset):
                 break
-            questions.append(dataset[r_idx][0])
+            questions.append(dataset[idx][0])
             answers.append(dataset[idx][1])
-            prompt = llm.format_prompt(dataset[r_idx][0])
+            prompt = llm.format_prompt(dataset[idx][0])
             prompts.append(prompt)
-        # generations = llm.batched_generate(prompts, oversample, temperature)
-        generations = [["random <answer> 120.0</answer>"],["random <answer> 7200.0</answer>"],["random <answer> 32.0</answer>"]]
-        # print(generations)
+        generations = llm.batched_generate(prompts, oversample, temperature)
         for idx in range(len(generations)):
             parsed_answers = [llm.parse_answer(g) for g in generations[idx]]
             min_diff = -1
