@@ -13,29 +13,42 @@ def generate_dataset(output_json: str = 'data/rft.json', oversample: int = 10, t
     dataset = Dataset("train")
     idx = range(len(dataset))
 
+
     llm = CoTModel()
     data = []
     count = 0
-    for idx in range(len(dataset)):
-        question = dataset[idx][0]
-        answer = dataset[idx][1]
-        prompt = llm.format_prompt(question)
-        generations = llm.batched_generate([prompt], oversample, temperature)
-        print(generations)
-        parsed_answers = [llm.parse_answer(g) for g in generations[0]]
-        min_diff = -1
-        min_diff_idx = -1
-        for i in range(len(parsed_answers)):
-            valid, diff = is_answer_valid(parsed_answers[i], answer)
-            if valid and (diff < min_diff or min_diff == -1):
-                min_diff = diff
-                min_diff_idx = i
-        
-        if min_diff_idx != -1:
-            # write this data to file
-            data.append([question, parsed_answers[min_diff_idx], generations[min_diff_idx]])
-            count += 1
-            print("found an entry, count:", count)
+    batch_size = 3
+
+    for r_idx in range(0, len(dataset), batch_size):
+        questions = []
+        answers = []
+        prompts = []
+        for idx in range(r_idx, r_idx+batch_size):
+            if idx >= len(dataset):
+                break
+            questions.append(dataset[r_idx][0])
+            answers.append(dataset[idx][1])
+            prompt = llm.format_prompt(dataset[r_idx][0])
+            prompts.append(prompt)
+        # generations = llm.batched_generate(prompts, oversample, temperature)
+        generations = [["random <answer> 120.0</answer>"],["random <answer> 7200.0</answer>"],["random <answer> 32.0</answer>"]]
+        # print(generations)
+        for idx in range(len(generations)):
+            parsed_answers = [llm.parse_answer(g) for g in generations[idx]]
+            min_diff = -1
+            min_diff_idx = -1
+            for i in range(len(parsed_answers)):
+                valid, diff = is_answer_valid(parsed_answers[i], answers[idx])
+                if valid and (diff < min_diff or min_diff == -1):
+                    min_diff = diff
+                    min_diff_idx = i
+            
+            if min_diff_idx != -1:
+                # write this data to file
+                data.append([questions[idx], parsed_answers[min_diff_idx], generations[idx][min_diff_idx]])
+                count += 1
+
+        print("count:%d, total:%d" % (count, r_idx+batch_size))
 
     with open(output_json, 'w') as file:
         json.dump(data, file, indent=4)
