@@ -4,9 +4,9 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # For part 1-3
-# checkpoint = "HuggingFaceTB/SmolLM2-360M-Instruct"
-# For part 1-4
-checkpoint = "HuggingFaceTB/SmolLM2-1.7B-Instruct"
+checkpoint = "HuggingFaceTB/SmolLM2-360M-Instruct"
+# For part 4
+# checkpoint = "HuggingFaceTB/SmolLM2-1.7B-Instruct"
 
 device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
 

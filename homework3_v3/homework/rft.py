@@ -1,6 +1,6 @@
 from .base_llm import BaseLLM
-from .sft import test_model, TokenizedDataset
-from .data import Dataset
+from .sft import TokenizedDataset
+from .data import Dataset, benchmark
 from transformers import Trainer, TrainingArguments
 from peft import PeftModel, LoraConfig, get_peft_model
 from pathlib import Path
@@ -13,7 +13,7 @@ def load() -> BaseLLM:
     model_name = "rft_model"
     model_path = Path(__file__).parent / model_name
 
-    llm = BaseLLM()
+    llm = BaseLLM("HuggingFaceTB/SmolLM2-1.7B-Instruct")
     llm.model = PeftModel.from_pretrained(llm.model, model_path).to(llm.device)
     llm.model.eval()
 
@@ -31,7 +31,7 @@ def train_model(
     # Reuse much of the SFT code here
     #raise NotImplementedError()
 
-    llm = BaseLLM()
+    llm = BaseLLM("HuggingFaceTB/SmolLM2-1.7B-Instruct")
     peft_config = LoraConfig(
         target_modules="all-linear",
         bias="none",
@@ -71,6 +71,18 @@ def train_model(
     model_path = Path(__file__).parent / model_name
     model.save_pretrained(model_path)
 
+
+def test_model(ckpt_path: str):
+    testset = Dataset("valid")
+    llm = BaseLLM("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+
+    # Load the model with LoRA adapters
+    from peft import PeftModel
+
+    llm.model = PeftModel.from_pretrained(llm.model, ckpt_path).to(llm.device)
+
+    benchmark_result = benchmark(llm, testset, 100)
+    print(f"{benchmark_result.accuracy=}  {benchmark_result.answer_rate=}")
 
 
 if __name__ == "__main__":
