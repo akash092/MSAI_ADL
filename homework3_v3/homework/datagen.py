@@ -14,7 +14,7 @@ def generate_dataset(output_json: str = 'data/rft.json', oversample: int = 10, t
     idx = range(len(dataset))
 
 
-    llm = CoTModel()
+    llm = CoTModel("HuggingFaceTB/SmolLM2-1.7B-Instruct")
     data = []
     count = 0
     batch_size = 3

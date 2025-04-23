@@ -97,12 +97,12 @@ def train_model(
 
     training_args = TrainingArguments(
         gradient_checkpointing=True,
-        learning_rate=1e-3,
+        learning_rate=5e-4,
         output_dir=output_dir,
         logging_dir=output_dir,
         report_to="tensorboard",
         per_device_train_batch_size=32,
-        num_train_epochs=5,
+        num_train_epochs=10,
         # weight_decay=0.01,
         # eval_strategy="epoch",
         # save_strategy="epoch",

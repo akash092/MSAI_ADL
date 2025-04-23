@@ -13,7 +13,7 @@ def load() -> BaseLLM:
     model_name = "rft_model"
     model_path = Path(__file__).parent / model_name
 
-    llm = BaseLLM("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    llm = BaseLLM()
     llm.model = PeftModel.from_pretrained(llm.model, model_path).to(llm.device)
     llm.model.eval()
 
@@ -31,7 +31,7 @@ def train_model(
     # Reuse much of the SFT code here
     #raise NotImplementedError()
 
-    llm = BaseLLM("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    llm = BaseLLM()
     peft_config = LoraConfig(
         target_modules="all-linear",
         bias="none",
@@ -48,12 +48,12 @@ def train_model(
 
     training_args = TrainingArguments(
         gradient_checkpointing=True,
-        learning_rate=1e-3,
+        learning_rate=5e-4,
         output_dir=output_dir,
         logging_dir=output_dir,
         report_to="tensorboard",
         per_device_train_batch_size=32,
-        num_train_epochs=5,
+        num_train_epochs=10,
         # weight_decay=0.01,
         # eval_strategy="epoch",
         # save_strategy="epoch",
@@ -74,7 +74,7 @@ def train_model(
 
 def test_model(ckpt_path: str):
     testset = Dataset("valid")
-    llm = BaseLLM("HuggingFaceTB/SmolLM2-1.7B-Instruct")
+    llm = BaseLLM()
 
     # Load the model with LoRA adapters
     from peft import PeftModel

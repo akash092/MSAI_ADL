@@ -2,11 +2,9 @@ from typing import overload
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
+import re
 
-# For part 1-3
 checkpoint = "HuggingFaceTB/SmolLM2-360M-Instruct"
-# For part 4
-# checkpoint = "HuggingFaceTB/SmolLM2-1.7B-Instruct"
 
 device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
 
@@ -30,10 +28,15 @@ class BaseLLM:
         Parse the <answer></answer> tag and return a float.
         This function is somewhat robust to output errors (e.g. missing </answer> tags).
         """
-        try:
-            return float(answer.split("<answer>")[1].split("</answer>")[0])
-        except (IndexError, ValueError):
-            return float("nan")
+        # try:
+        #     return float(answer.split("<answer>")[1].split("</answer>")[0])
+        # except (IndexError, ValueError):
+        #     return float("nan")
+        match = re.findall(r"[-+]?\d*\.\d+|\d+", answer)
+        if match:
+            return float(match[-1])
+        return float("nan")
+
 
     def generate(self, prompt: str) -> str:
         """
