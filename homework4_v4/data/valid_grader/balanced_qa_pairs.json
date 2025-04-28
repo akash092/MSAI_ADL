@@ -1,0 +1,602 @@
+[
+  {
+    "question": "Is suzanne to the left or right of the ego car?",
+    "answer": "right",
+    "image_file": "valid/00095_03_im.jpg"
+  },
+  {
+    "question": "Is suzanne in front of or behind the ego car?",
+    "answer": "front",
+    "image_file": "valid/00095_03_im.jpg"
+  },
+  {
+    "question": "Where is suzanne relative to the ego car?",
+    "answer": "front and right",
+    "image_file": "valid/00095_03_im.jpg"
+  },
+  {
+    "question": "Is gavroche to the left or right of the ego car?",
+    "answer": "right",
+    "image_file": "valid/00095_03_im.jpg"
+  },
+  {
+    "question": "How many karts are to the left of the ego car?",
+    "answer": "1",
+    "image_file": "valid/00095_03_im.jpg"
+  },
+  {
+    "question": "How many karts are to the right of the ego car?",
+    "answer": "3",
+    "image_file": "valid/00095_03_im.jpg"
+  },
+  {
+    "question": "How many karts are in front of the ego car?",
+    "answer": "3",
+    "image_file": "valid/00095_03_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "3",
+    "image_file": "valid/00043_02_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "black_forest",
+    "image_file": "valid/00088_04_im.jpg"
+  },
+  {
+    "question": "How many karts are in front of the ego car?",
+    "answer": "1",
+    "image_file": "valid/00088_05_im.jpg"
+  },
+  {
+    "question": "Is amanda in front of or behind the ego car?",
+    "answer": "back",
+    "image_file": "valid/0005d_07_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/00085_06_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "1",
+    "image_file": "valid/00085_01_im.jpg"
+  },
+  {
+    "question": "Is xue to the left or right of the ego car?",
+    "answer": "left",
+    "image_file": "valid/000ff_01_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "abyss",
+    "image_file": "valid/000ff_06_im.jpg"
+  },
+  {
+    "question": "Where is amanda relative to the ego car?",
+    "answer": "back and right",
+    "image_file": "valid/000ce_00_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "xr591",
+    "image_file": "valid/00010_06_im.jpg"
+  },
+  {
+    "question": "How many karts are to the left of the ego car?",
+    "answer": "1",
+    "image_file": "valid/00073_05_im.jpg"
+  },
+  {
+    "question": "Is xue to the left or right of the ego car?",
+    "answer": "left",
+    "image_file": "valid/000c2_06_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "2",
+    "image_file": "valid/0007d_04_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "amanda",
+    "image_file": "valid/000e2_07_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "hexley",
+    "image_file": "valid/000bf_02_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "gnu",
+    "image_file": "valid/000bf_03_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "volcano_island",
+    "image_file": "valid/00003_02_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "xue",
+    "image_file": "valid/00003_09_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "tutorial",
+    "image_file": "valid/00070_09_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/0009a_07_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "suzanne",
+    "image_file": "valid/00086_05_im.jpg"
+  },
+  {
+    "question": "How many karts are to the right of the ego car?",
+    "answer": "1",
+    "image_file": "valid/000fe_08_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "hacienda",
+    "image_file": "valid/00028_06_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "olivermath",
+    "image_file": "valid/00090_09_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "gnu",
+    "image_file": "valid/00038_02_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "1",
+    "image_file": "valid/0007a_02_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "4",
+    "image_file": "valid/0000b_05_im.jpg"
+  },
+  {
+    "question": "Where is tux relative to the ego car?",
+    "answer": "front and right",
+    "image_file": "valid/00015_01_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "gran_paradiso_island",
+    "image_file": "valid/00015_02_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "lighthouse",
+    "image_file": "valid/0006a_06_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "suzanne",
+    "image_file": "valid/000b7_08_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "1",
+    "image_file": "valid/000b7_07_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "4",
+    "image_file": "valid/000ec_01_im.jpg"
+  },
+  {
+    "question": "How many karts are to the right of the ego car?",
+    "answer": "1",
+    "image_file": "valid/000ec_00_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "sandtrack",
+    "image_file": "valid/000ec_06_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "3",
+    "image_file": "valid/0000a_00_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "2",
+    "image_file": "valid/0006b_06_im.jpg"
+  },
+  {
+    "question": "Is suzanne to the left or right of the ego car?",
+    "answer": "left",
+    "image_file": "valid/0006b_06_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "puffy",
+    "image_file": "valid/000b9_09_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "pidgin",
+    "image_file": "valid/000d7_06_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/000b4_05_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "hexley",
+    "image_file": "valid/000e7_03_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "1",
+    "image_file": "valid/000e7_01_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "volcano_island",
+    "image_file": "valid/00093_01_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "tux",
+    "image_file": "valid/00093_04_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/00055_04_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "1",
+    "image_file": "valid/0002a_04_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/0004b_02_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/00036_01_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "1",
+    "image_file": "valid/0005b_08_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "minigolf",
+    "image_file": "valid/0005b_07_im.jpg"
+  },
+  {
+    "question": "Is amanda in front of or behind the ego car?",
+    "answer": "back",
+    "image_file": "valid/00083_04_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "snowtuxpeak",
+    "image_file": "valid/0009d_04_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "adiumy",
+    "image_file": "valid/0009d_06_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "cocoa_temple",
+    "image_file": "valid/00069_06_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "xue",
+    "image_file": "valid/000bb_01_im.jpg"
+  },
+  {
+    "question": "Is gavroche to the left or right of the ego car?",
+    "answer": "left",
+    "image_file": "valid/000da_05_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "puffy",
+    "image_file": "valid/000da_09_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "2",
+    "image_file": "valid/0006c_04_im.jpg"
+  },
+  {
+    "question": "How many karts are in front of the ego car?",
+    "answer": "2",
+    "image_file": "valid/000ea_04_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/000b5_07_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "snowtuxpeak",
+    "image_file": "valid/000b5_08_im.jpg"
+  },
+  {
+    "question": "Is kiki in front of or behind the ego car?",
+    "answer": "back",
+    "image_file": "valid/000a8_02_im.jpg"
+  },
+  {
+    "question": "Where is konqi relative to the ego car?",
+    "answer": "back and right",
+    "image_file": "valid/000a8_00_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "kiki",
+    "image_file": "valid/000a8_01_im.jpg"
+  },
+  {
+    "question": "How many karts are to the right of the ego car?",
+    "answer": "1",
+    "image_file": "valid/000fa_05_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/000fa_00_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/00044_04_im.jpg"
+  },
+  {
+    "question": "Where is konqi relative to the ego car?",
+    "answer": "back and right",
+    "image_file": "valid/00044_00_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "minigolf",
+    "image_file": "valid/00027_08_im.jpg"
+  },
+  {
+    "question": "Is emule in front of or behind the ego car?",
+    "answer": "back",
+    "image_file": "valid/00082_06_im.jpg"
+  },
+  {
+    "question": "How many karts are to the left of the ego car?",
+    "answer": "1",
+    "image_file": "valid/00082_09_im.jpg"
+  },
+  {
+    "question": "Is puffy in front of or behind the ego car?",
+    "answer": "back",
+    "image_file": "valid/000ab_01_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "beastie",
+    "image_file": "valid/000ab_03_im.jpg"
+  },
+  {
+    "question": "Is gavroche in front of or behind the ego car?",
+    "answer": "front",
+    "image_file": "valid/00092_07_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/0004c_07_im.jpg"
+  },
+  {
+    "question": "Is wilber to the left or right of the ego car?",
+    "answer": "right",
+    "image_file": "valid/00054_02_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/000aa_09_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "tux",
+    "image_file": "valid/00034_02_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "wilber",
+    "image_file": "valid/00057_08_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "sandtrack",
+    "image_file": "valid/00091_06_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "candela_city",
+    "image_file": "valid/00039_06_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "cocoa_temple",
+    "image_file": "valid/00029_01_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "snowmountain",
+    "image_file": "valid/0003c_02_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "beastie",
+    "image_file": "valid/00047_04_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "ravenbridge_mansion",
+    "image_file": "valid/00024_09_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "amanda",
+    "image_file": "valid/0000c_08_im.jpg"
+  },
+  {
+    "question": "Where is pidgin relative to the ego car?",
+    "answer": "back and left",
+    "image_file": "valid/000eb_07_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "lighthouse",
+    "image_file": "valid/000eb_05_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/000d8_03_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/0001c_01_im.jpg"
+  },
+  {
+    "question": "How many karts are to the right of the ego car?",
+    "answer": "2",
+    "image_file": "valid/000e8_04_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "amanda",
+    "image_file": "valid/000ba_01_im.jpg"
+  },
+  {
+    "question": "Is gnu to the left or right of the ego car?",
+    "answer": "right",
+    "image_file": "valid/000b0_01_im.jpg"
+  },
+  {
+    "question": "How many karts are in front of the ego car?",
+    "answer": "1",
+    "image_file": "valid/0000e_02_im.jpg"
+  },
+  {
+    "question": "Is xue to the left or right of the ego car?",
+    "answer": "right",
+    "image_file": "valid/00071_04_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "1",
+    "image_file": "valid/0006f_09_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "xr591",
+    "image_file": "valid/000c0_01_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "2",
+    "image_file": "valid/000dd_05_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "puffy",
+    "image_file": "valid/000e3_01_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "hexley",
+    "image_file": "valid/0004f_00_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/00032_01_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/000f3_04_im.jpg"
+  },
+  {
+    "question": "What kart is the ego car?",
+    "answer": "hexley",
+    "image_file": "valid/00087_05_im.jpg"
+  },
+  {
+    "question": "Where is wilber relative to the ego car?",
+    "answer": "back and right",
+    "image_file": "valid/00087_05_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "2",
+    "image_file": "valid/000fd_04_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "1",
+    "image_file": "valid/0002f_07_im.jpg"
+  },
+  {
+    "question": "How many karts are behind the ego car?",
+    "answer": "1",
+    "image_file": "valid/0002f_01_im.jpg"
+  },
+  {
+    "question": "Is beastie in front of or behind the ego car?",
+    "answer": "front",
+    "image_file": "valid/000f0_05_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "ravenbridge_mansion",
+    "image_file": "valid/000e0_09_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "1",
+    "image_file": "valid/0007e_01_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "3",
+    "image_file": "valid/000d0_00_im.jpg"
+  },
+  {
+    "question": "How many karts are to the left of the ego car?",
+    "answer": "1",
+    "image_file": "valid/00011_02_im.jpg"
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "question": "What kart is the ego car?",
+    "answer": "beastie",
+    "image_file": "train/007d8_06_im.jpg"
+  },
+  {
+    "question": "How many karts are there in the scenario?",
+    "answer": "4",
+    "image_file": "train/0014b_08_im.jpg"
+  },
+  {
+    "question": "What track is this?",
+    "answer": "fortmagma",
+    "image_file": "train/0126f_03_im.jpg"
+  },
+  {
+    "question": "Is gnu in front of or behind the ego car?",
+    "answer": "front",
+    "image_file": "train/0055c_08_im.jpg"
+  },
+  {
+    "question": "How many karts are in front of the ego car?",
+    "answer": "1",
+    "image_file": "train/00217_03_im.jpg"
+  }
+]

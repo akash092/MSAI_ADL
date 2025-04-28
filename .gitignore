@@ -1,4 +1,6 @@
 homework2_v5/data
 logs
 *.pyc
-
+homework4_v4/data/train
+homework4_v4/data/valid
+homework4_v4/demo_train
