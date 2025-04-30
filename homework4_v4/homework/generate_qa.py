@@ -131,6 +131,11 @@ def draw_detections(
     return np.array(pil_image)
 
 
+def get_image_path(info_path: str, view_index: int):
+    info_path = Path(info_path)
+    base_name = info_path.stem.replace("_info", "")
+    return list(info_path.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
+
 def extract_kart_objects(
     info_path: str, view_index: int, img_width: int = 150, img_height: int = 100, min_box_size: int = 5
 ) -> list:
@@ -152,7 +157,81 @@ def extract_kart_objects(
         - is_center_kart: Boolean indicating if this is the kart closest to image center
     """
 
-    raise NotImplementedError("Not implemented")
+    info_path = Path(info_path)
+    base_name = info_path.stem.replace("_info", "")
+    image_path = list(info_path.parent.glob(f"{base_name}_{view_index:02d}_im.jpg"))[0]
+    pil_image = Image.open(image_path)
+    if pil_image is None:
+        raise ValueError(f"Could not read image at {image_path}")
+
+    # Get image dimensions
+    # print(f"{img_width=} {img_height=}")
+    img_center_x, img_center_y = img_width/2, img_height/2
+    # print(f"{img_center_x=} {img_center_y=}")
+    center = np.array([img_center_x, img_center_y])
+
+    # Extract frame ID and view index from image filename
+    _, view_index = extract_frame_info(image_path)
+
+    # Read the info.json file
+    with open(info_path) as f:
+        info = json.load(f)
+
+    # Get the correct detection frame based on view index
+    if view_index < len(info["detections"]):
+        frame_detections = info["detections"][view_index]
+    else:
+        print(f"Warning: View index {view_index} out of range for detections")
+        return np.array(pil_image)
+    
+    # Calculate scaling factors
+    scale_x = img_width / ORIGINAL_WIDTH
+    scale_y = img_height / ORIGINAL_HEIGHT
+    # print(f"{scale_x=} {scale_y=}")
+
+    # Draw each detection
+    result = []
+    min_center_distance = -1
+    ego_cart_track_id = -1
+    for detection in frame_detections:
+        class_id, track_id, x1, y1, x2, y2 = detection
+        class_id = int(class_id)
+        track_id = int(track_id)
+
+        if class_id != 1:
+            continue
+
+        # Scale coordinates to fit the current image size
+        x1_scaled = int(x1 * scale_x)
+        y1_scaled = int(y1 * scale_y)
+        x2_scaled = int(x2 * scale_x)
+        y2_scaled = int(y2 * scale_y)
+        # print(f"{x1_scaled=} {y1_scaled=} {x2_scaled=} {y2_scaled=}")
+        # Skip if bounding box is too small
+        if (x2_scaled - x1_scaled) < min_box_size or (y2_scaled - y1_scaled) < min_box_size:
+            continue
+
+        if x2_scaled < 0 or x1_scaled > img_width or y2_scaled < 0 or y1_scaled > img_height:
+            continue
+        
+        center_x, center_y = (x2_scaled + x1_scaled)/2, (y2_scaled + y1_scaled)/2
+        # print(f"{center_x=} {center_y=}")
+        p2 = np.array([center_x, center_y])
+        center_distance = np.linalg.norm(center - p2)
+        # print(f"{center_distance=} {ego_cart_track_id=} {min_center_distance=}")
+        if ego_cart_track_id == -1 or center_distance < min_center_distance:
+            min_center_distance = center_distance
+            ego_cart_track_id = track_id
+        result.append({"instance_id":track_id, "kart_name": info["karts"][track_id],
+                       "center": (center_x, center_y), "is_center_kart": False})
+    
+    # based on ego_cart_track_id, adjust the element's is_center_kart in list
+    for idx in range(len(result)):
+        if result[idx]["instance_id"] == ego_cart_track_id:
+            result[idx]["is_center_kart"] = True
+            break
+    
+    return result
 
 def extract_track_info(info_path: str) -> str:
     """
@@ -165,8 +244,14 @@ def extract_track_info(info_path: str) -> str:
         Track name as a string
     """
 
-    raise NotImplementedError("Not implemented")
+    # Read the info.json file
+    with open(info_path) as f:
+        info = json.load(f)
 
+    return info["track"]
+
+def get_dict(question: str, answer: str, image_file: str):
+    return {"question":question, "answer": answer, "image_file": image_file}
 
 def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img_height: int = 100) -> list:
     """
@@ -181,26 +266,94 @@ def generate_qa_pairs(info_path: str, view_index: int, img_width: int = 150, img
     Returns:
         List of dictionaries, each containing a question and answer
     """
+
+    
+
+    track_info = extract_track_info(info_path)
+    karts_info = extract_kart_objects(info_path, view_index)
+    result = []
+    ego_cart_entry = None
+    # Iterate through each entry and get ego cart
+    for entry in karts_info:
+        if entry["is_center_kart"] == True:
+            ego_cart_entry = entry
+            break
+
+    if ego_cart_entry is None:
+        return []
+    image_path = str(get_image_path(info_path, view_index)).split("/",1)[1]
     # 1. Ego car question
     # What kart is the ego car?
+    result.append(get_dict("What kart is the ego car?", ego_cart_entry["kart_name"], image_path))
 
     # 2. Total karts question
     # How many karts are there in the scenario?
+    result.append(get_dict("How many karts are there in the scenario?", str(len(karts_info)), image_path))
 
     # 3. Track information questions
     # What track is this?
+    result.append(get_dict("What track is this?", track_info, image_path))
 
     # 4. Relative position questions for each kart
     # Is {kart_name} to the left or right of the ego car?
     # Is {kart_name} in front of or behind the ego car?
+    # Where is {kart_name} relative to the ego car?"
+
+    left, right, front, behind = 0, 0, 0, 0
+    for entry in karts_info:
+        if entry["is_center_kart"] == True:
+            continue
+        if entry["center"][0] <= ego_cart_entry["center"][0]:
+            x_alignment = "left"
+            left += 1
+        else:
+            x_alignment = "right"
+            right += 1
+        result.append(get_dict("Is "+entry["kart_name"]+" to the left or right of the ego car?", x_alignment,image_path))
+    
+        if entry["center"][1] < ego_cart_entry["center"][1]:
+            y_alignment = "front"
+            front += 1
+        else:
+            y_alignment = "back"
+            behind +=1 
+        result.append(get_dict("Is "+entry["kart_name"]+" in front of or behind the ego car?", y_alignment, image_path))
+        result.append(get_dict("Where is "+entry["kart_name"]+" relative to the ego car?", y_alignment + " and " +x_alignment, image_path))
 
     # 5. Counting questions
     # How many karts are to the left of the ego car?
     # How many karts are to the right of the ego car?
     # How many karts are in front of the ego car?
     # How many karts are behind the ego car?
+    # No need to add those QA where answer is 0 since the test dataset doesn't have such questions
+    if left != 0:
+        result.append(get_dict("How many karts are to the left of the ego car?", str(left), image_path))
+    if right != 0:
+        result.append(get_dict("How many karts are to the right of the ego car?", str(right), image_path))
+    if front != 0:
+        result.append(get_dict("How many karts are in front of the ego car?", str(front), image_path))
+    if behind != 0:
+        result.append(get_dict("How many karts are behind the ego car?", str(behind), image_path))
+    return result
 
-    raise NotImplementedError("Not implemented")
+def generate(data_dir: str, output_file: str):
+    # Get all info files
+    info_files = Path(data_dir).glob("*_info.json")
+    qa_data = []
+    for file in info_files:
+        with open(file) as f:
+            info = json.load(f)
+
+        # Get the max detection frame
+        for view_index in range(len(info["detections"])):
+            
+            # Generate QA pairs
+            qa_pairs = generate_qa_pairs(file, view_index)
+            qa_data.extend(qa_pairs)
+
+    print(f"{output_file=}")
+    with open(output_file, 'w') as file:
+        json.dump(qa_data, file, indent=4)
 
 
 def check_qa_pairs(info_file: str, view_index: int):
@@ -229,13 +382,13 @@ def check_qa_pairs(info_file: str, view_index: int):
     # Generate QA pairs
     qa_pairs = generate_qa_pairs(info_file, view_index)
 
-    # Print QA pairs
-    print("\nQuestion-Answer Pairs:")
-    print("-" * 50)
-    for qa in qa_pairs:
-        print(f"Q: {qa['question']}")
-        print(f"A: {qa['answer']}")
-        print("-" * 50)
+    # # Print QA pairs
+    # print("\nQuestion-Answer Pairs:")
+    # print("-" * 50)
+    # for qa in qa_pairs:
+    #     print(f"Q: {qa['question']}")
+    #     print(f"A: {qa['answer']}")
+    #     print("-" * 50)
 
 
 """
@@ -247,7 +400,7 @@ You probably need to add additional commands to Fire below.
 
 
 def main():
-    fire.Fire({"check": check_qa_pairs})
+    fire.Fire({"check": check_qa_pairs, "generate": generate})
 
 
 if __name__ == "__main__":
